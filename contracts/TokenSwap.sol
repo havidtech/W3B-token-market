@@ -2,6 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
 
 interface IERCToken {
     function name() external view returns (string memory);
@@ -17,24 +19,31 @@ interface IERCToken {
 
 
 contract TokenSwap {
+    AggregatorV3Interface internal token1ToEth;
+    AggregatorV3Interface internal token2ToEth;
+
+
     address private token1Address;
     address private token2Address;
 
-    constructor(address _token1Address, address _token2Address) {
+    constructor(address _token1Address, address _token2Address, address, address token1ToEthFeed, address token2ToEthFeed) {
         token1Address = _token1Address;
         token2Address = _token2Address;
+
+        token1ToEth = AggregatorV3Interface(token1ToEthFeed);
+        token2ToEth = AggregatorV3Interface(token2ToEthFeed);
     }
 
     function swap(address _sourceTokenAddress, address _destinationTokenAddress, uint amount) public returns (bool){
 
         // Assert that token is supported
-        require(isSwapValid(_sourceTokenAddress, _destinationTokenAddress), "This Swap is not supported in our market");
+        require(isSwapValid(_sourceTokenAddress, _destinationTokenAddress), "Not supported");
 
         // Require sufficient balance of initiator
         require(isBalanceSufficient(_sourceTokenAddress, msg.sender, amount), "Insufficient Balance");
 
         // Calculate amount of destination token
-        uint destinationAmount = 10; // Change this when chain link is integrated
+        uint destinationAmount = computeDestinationAmount(_sourceTokenAddress, amount); 
 
         // Require sufficient liquidity of the market
         require(isBalanceSufficient(_destinationTokenAddress, address(this), destinationAmount), "Insufficient Market Liquidity");
@@ -45,7 +54,50 @@ contract TokenSwap {
         return true;
     }
 
-    function computeToAmount(address _sourceToken, address _destinationToken, uint amount) public pure returns (uint) {
+    function computeDestinationAmount(address _sourceTokenAddress, uint amount) public view returns (uint) {
+
+        uint _sourceTokenToEth;
+        uint _destinationTokenToEth;
+        int price;
+        if(_sourceTokenAddress == token1Address){
+              (
+            /*uint80 roundID*/,
+            price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) =  token1ToEth.latestRoundData();
+        _sourceTokenToEth = uint(price);
+
+        (
+            /*uint80 roundID*/,
+            price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) =  token2ToEth.latestRoundData();
+        _destinationTokenToEth = uint(price);
+        }else{
+                          (
+            /*uint80 roundID*/,
+            price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) =  token2ToEth.latestRoundData();
+        _sourceTokenToEth = uint(price);
+
+        (
+            /*uint80 roundID*/,
+            price,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) =  token1ToEth.latestRoundData();
+        _destinationTokenToEth = uint(price);
+        }
+
+       return (_sourceTokenToEth * amount ) / _destinationTokenToEth;
     }
 
     function isBalanceSufficient(address _tokenAddress, address _owner, uint amount) internal view returns (bool){
