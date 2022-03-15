@@ -26,7 +26,7 @@ contract TokenSwap {
     address private token1Address;
     address private token2Address;
 
-    constructor(address _token1Address, address _token2Address, address, address token1ToEthFeed, address token2ToEthFeed) {
+    constructor(address _token1Address, address _token2Address, address token1ToEthFeed, address token2ToEthFeed) {
         token1Address = _token1Address;
         token2Address = _token2Address;
 
