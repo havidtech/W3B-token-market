@@ -1,11 +1,18 @@
 import { ethers } from "hardhat";
+import {
+  ERC20TokenAddresses,
+  // eslint-disable-next-line no-unused-vars
+  sampleTokenHolder,
+  tokenSwapContractAddress,
+  // eslint-disable-next-line node/no-missing-import
+} from "../sampleData";
 
 async function viewBalance() {
-  const tokenAddress = "0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0";
-  const tokenOwner = "0x24BA1542F8a0a20e8251d096213384Cfb0eE3dbC";
+  const tokenAddress = ERC20TokenAddresses.USDT;
+  const owner = tokenSwapContractAddress;
   const token = await ethers.getContractAt("IERCToken", tokenAddress);
 
-  console.log(await token.balanceOf(tokenOwner));
+  console.log(await token.balanceOf(owner));
 }
 
 viewBalance().catch((error) => {
