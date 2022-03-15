@@ -1,11 +1,13 @@
 import { ethers } from "hardhat";
+// eslint-disable-next-line node/no-missing-import
+import { ERC20TokenAddresses, PriceFeedAddresses } from "../sampleData";
 
 async function deployTokenSwap() {
   // Tokens to form market
-  const token1Address = "token1Address"; // Change this
-  const token2Address = "token2Address"; // Change this
-  const token1ToEthFeed = "token1ToEthFeed"; // Change this
-  const token2ToEthFeed = "token2ToEthFeed"; // Change this
+  const token1Address = ERC20TokenAddresses.USDC; // USDC
+  const token2Address = ERC20TokenAddresses.USDT; // USDT
+  const token1ToEthFeed = PriceFeedAddresses.USDC_ETH;
+  const token2ToEthFeed = PriceFeedAddresses.USDT_ETH;
 
   // We get the contract to deploy
   const TokenSwap = await ethers.getContractFactory("TokenSwap");
