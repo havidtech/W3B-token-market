@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 
 interface IERCToken {
@@ -19,6 +20,7 @@ interface IERCToken {
 
 
 contract TokenSwap {
+    using SafeMath for uint256;
     AggregatorV3Interface internal token1ToEth;
     AggregatorV3Interface internal token2ToEth;
 
