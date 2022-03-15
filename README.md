@@ -3,7 +3,7 @@ Last Days of Web3Bridge Cohort VI Task 1
 
 This contract creates a market for only two tokens. Price feeds are gotten from chainlink.
 
-#To Setup for verification
+# To Setup for verification
 1) Clone the repository
 2) Edit and run the deploy script
 3) Run the addLiquidity Script to Pump liquidity into the market
