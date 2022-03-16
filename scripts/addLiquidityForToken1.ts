@@ -1,9 +1,10 @@
+/* eslint-disable node/no-missing-import */
+/* eslint-disable no-undef */
 import { ethers } from "hardhat";
 import {
   ERC20TokenAddresses,
   liquidityProvider,
   tokenSwapContractAddress,
-  // eslint-disable-next-line node/no-missing-import
 } from "../sampleData";
 
 async function addLiquidity() {
@@ -14,7 +15,6 @@ async function addLiquidity() {
 
   // Carry out the impersonation
   // @ts-ignore
-  // eslint-disable-next-line no-undef
   await hre.network.provider.request({
     method: "hardhat_impersonateAccount",
     params: [liquidityProvider.USDC],
